@@ -11,57 +11,11 @@
 #include <dirent.h>
 
 #define FTPDIR "D:\\data\\ftp"
+// ./sde.exe /home/glr/src/example/ /home/glr/tmp
 int check_tar(char ** sdepoint, FILE * log);
 
 
-#include <gtk/gtk.h>
-int main (int argc,           char *argv[])
-{
-  GtkWidget *window, *menubar, *file, *edit, *help, *filemenu, *editmenu, *helpmenu;
-  GtkWidget *new, *open, *cut, *copy, *paste, *contents, *about;
-  GtkAccelGroup *group;
-  gtk_init (&argc, &argv);
-  window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_window_set_title (GTK_WINDOW (window), "Menu Bars");
-  gtk_widget_set_size_request (window, 250, -1);
-  group = gtk_accel_group_new ();
-  menubar = gtk_menu_bar_new ();
-  file = gtk_menu_item_new_with_label ("File");
-  edit = gtk_menu_item_new_with_label ("Edit");
-  help = gtk_menu_item_new_with_label ("Help");
-  filemenu = gtk_menu_new ();
-  editmenu = gtk_menu_new ();
-  helpmenu = gtk_menu_new ();
-  gtk_menu_item_set_submenu (GTK_MENU_ITEM (file), filemenu);
-  gtk_menu_item_set_submenu (GTK_MENU_ITEM (edit), editmenu);
-  gtk_menu_item_set_submenu (GTK_MENU_ITEM (help), helpmenu);
-  gtk_menu_shell_append (GTK_MENU_SHELL (menubar), file);
-  gtk_menu_shell_append (GTK_MENU_SHELL (menubar), edit);
-  gtk_menu_shell_append (GTK_MENU_SHELL (menubar), help);
-  /* Create the File menu content. */
-  new = gtk_image_menu_item_new_from_stock (GTK_STOCK_NEW, group);
-  open = gtk_image_menu_item_new_from_stock (GTK_STOCK_OPEN, group);
-  gtk_menu_shell_append (GTK_MENU_SHELL (filemenu), new);
-  gtk_menu_shell_append (GTK_MENU_SHELL (filemenu), open);
-  /* Create the Edit menu content. */
-  cut = gtk_image_menu_item_new_from_stock (GTK_STOCK_CUT, group);
-  copy = gtk_image_menu_item_new_from_stock (GTK_STOCK_COPY, group);
-  paste = gtk_image_menu_item_new_from_stock (GTK_STOCK_PASTE, group);
-  gtk_menu_shell_append (GTK_MENU_SHELL (editmenu), cut);
-  gtk_menu_shell_append (GTK_MENU_SHELL (editmenu), copy);
-  gtk_menu_shell_append (GTK_MENU_SHELL (editmenu), paste);
-  /* Create the Help menu content. */
-  contents = gtk_image_menu_item_new_from_stock (GTK_STOCK_HELP, group);
-  about = gtk_image_menu_item_new_from_stock (GTK_STOCK_ABOUT, group);
-  gtk_menu_shell_append (GTK_MENU_SHELL (helpmenu), contents);
-  gtk_menu_shell_append (GTK_MENU_SHELL (helpmenu), about);
-  gtk_container_add (GTK_CONTAINER (window), menubar);
-  gtk_window_add_accel_group (GTK_WINDOW (window), group);
-  gtk_widget_show_all (window);
-  gtk_main ();
-  return 0;
-}
-/*
+
 int main(int argc,char *argv[])
 {
     DIR *dp;
@@ -117,7 +71,7 @@ int main(int argc,char *argv[])
 		exit(0);
 	}
     chdir(path);
-	printf(path);
+	printf("%s \n", path);
 	log=fopen(logpath,"w");
     printf("%s \n",logpath);
 
@@ -128,7 +82,7 @@ int main(int argc,char *argv[])
 		} else {
             memset(sdepath,0,60);
             strcpy(sdepath,path);
-            strcat(sdepath,"\\");
+            strcat(sdepath,"/");
             strcat(sdepath,dir_entry->d_name);
             r=check_tar( &sdepath, log);
             
@@ -143,7 +97,7 @@ int main(int argc,char *argv[])
     closedir(dp);
     exit(exitcode);
 }
-*/
+
 int check_tar(char ** sdepoint, FILE * log)
 {
     int r, len;
@@ -161,7 +115,9 @@ int check_tar(char ** sdepoint, FILE * log)
             printf("%s\n",sdepath);
             r = archive_read_open_filename(a, sdepath, 10240);
             if (r != ARCHIVE_OK)
-            {        ;
+            {       
+		    printf("why archive not ok\n");
+		    ;
         
             } else {
                 compo_count=0;
@@ -210,7 +166,7 @@ int check_tar(char ** sdepoint, FILE * log)
 					fprintf(log,"%d\n\n\n",compo_count);
             }
             printf("%d:\n", __LINE__);
-            r = archive_read_finish(a); 
+            r = archive_read_free(a); 
             printf("%d:\n", __LINE__);
             return r;
 }
